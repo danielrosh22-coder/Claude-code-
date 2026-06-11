@@ -2,339 +2,430 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>מדריך רולטה — הגלגל וההימורים</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אפליקציית חיטוב חכמה</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --ink: #222;
+    --muted: #777;
+    --brand: #2c7be5;
+    --good: #1e9e62;
+    --bad: #d64545;
+    --warn: #e0a800;
+    --line: #e3e6ea;
+  }
+  * { box-sizing: border-box; }
   body {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
-    background: #1a1a1a;
-    color: #eee;
+    direction: rtl;
+    background: var(--bg);
+    color: var(--ink);
     margin: 0;
-    padding: 20px;
-    line-height: 1.6;
+    padding: 0;
+    line-height: 1.5;
   }
-  h1, h2 { color: #fff; }
-  h1 { border-bottom: 2px solid #444; padding-bottom: 8px; }
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
+  .layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+    align-items: start;
   }
-  .wheel-area {
+  h1 { font-size: 22px; margin: 4px 0 12px; }
+  h2 {
     background: #222;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 0 0 10px;
   }
-  .info {
-    background: #222;
-    padding: 20px;
-    border-radius: 12px;
-  }
-  svg { max-width: 100%; height: auto; }
-  .legend {
-    margin-top: 16px;
-    text-align: right;
-  }
-  .legend-item {
-    display: inline-flex;
-    align-items: center;
-    margin: 4px 12px 4px 0;
-    font-size: 14px;
-  }
-  .swatch {
-    width: 16px; height: 16px;
-    margin-left: 8px;
-    border-radius: 3px;
-    border: 1px solid #555;
-  }
-  .group {
-    margin: 16px 0;
+  h3 { margin: 0 0 8px; }
+  h4 { margin: 14px 0 6px; }
+  .section {
+    background: var(--card);
     padding: 12px;
-    border-radius: 8px;
-    background: #2a2a2a;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
   }
-  .group h3 { margin: 0 0 8px 0; }
-  .nums {
-    font-family: "SF Mono", Consolas, monospace;
+  button {
+    cursor: pointer;
     font-size: 14px;
-    direction: ltr;
-    text-align: left;
+    padding: 9px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: #fafbfc;
+    transition: background .15s, transform .05s;
   }
-  .voisins { border-right: 4px solid #4A90E2; }
-  .tiers { border-right: 4px solid #F5A623; }
-  .orphelins { border-right: 4px solid #9013FE; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    font-size: 13px;
+  button:hover { background: #eef1f5; }
+  button:active { transform: scale(.97); }
+  .food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
   }
-  th, td {
-    padding: 6px 8px;
-    border-bottom: 1px solid #333;
-    text-align: right;
+  .food-grid button { text-align: right; }
+  .food-grid button small { display: block; color: var(--muted); font-size: 11px; }
+
+  /* Summary panel */
+  #summary {
+    position: sticky;
+    top: 16px;
+    background: var(--card);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
   }
-  th { background: #2a2a2a; }
-  .table-layout {
-    display: inline-grid;
-    grid-template-columns: auto repeat(12, 32px) auto;
-    gap: 2px;
-    direction: ltr;
-    margin: 16px auto;
-    font-family: monospace;
-    font-size: 12px;
+  .stat { margin: 10px 0; }
+  .stat .nums { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .stat .nums b { font-size: 15px; }
+  .bar { background: #eef1f5; border-radius: 99px; height: 10px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 99px; transition: width .3s; }
+  .good { color: var(--good); }
+  .bad  { color: var(--bad); }
+  .warn { color: var(--warn); }
+  #suggest > div { padding: 6px 8px; border-radius: 8px; margin: 5px 0; font-size: 13px; background: #f7f9fb; }
+  #suggest .good { background: #e8f6ee; }
+  #suggest .bad  { background: #fbeaea; }
+  #suggest .warn { background: #fcf6e3; }
+
+  .controls { display: flex; gap: 8px; margin-top: 12px; }
+  .controls button { flex: 1; }
+  .controls .primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .controls .primary:hover { background: #1f6fd6; }
+
+  /* Food log */
+  #log { list-style: none; padding: 0; margin: 0; }
+  #log li {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 4px; border-bottom: 1px solid var(--line); font-size: 14px;
   }
-  .cell {
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    color: white;
-    font-weight: bold;
-    border-radius: 3px;
+  #log li:last-child { border-bottom: none; }
+  #log .meta { color: var(--muted); font-size: 12px; }
+  #log .del {
+    border: none; background: none; color: var(--bad);
+    font-size: 18px; line-height: 1; padding: 0 6px;
   }
-  .red { background: #c0392b; }
-  .black { background: #2c2c2c; border: 1px solid #555; }
-  .green { background: #16a085; }
-  .label-cell {
-    color: #999;
-    font-size: 10px;
-    display: flex; align-items: center;
-    padding: 0 6px;
+  .empty { color: var(--muted); font-size: 13px; padding: 6px 0; }
+
+  /* Custom + targets rows */
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row input {
+    flex: 1; min-width: 70px; padding: 8px; border: 1px solid var(--line);
+    border-radius: 8px; font-size: 14px; text-align: right;
   }
-  .zero-cell {
-    grid-row: 1 / 4;
-    height: auto;
-  }
-  .note {
-    background: #2a3a4a;
-    padding: 12px;
-    border-radius: 6px;
-    margin-top: 12px;
-    font-size: 14px;
+  .row label { font-size: 13px; color: var(--muted); }
+
+  canvas { max-width: 100%; }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    #summary { position: static; order: -1; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="layout">
 
-<div class="wheel-area">
-  <h1>הגלגל האירופאי</h1>
-  <svg id="wheel" viewBox="-260 -260 520 520" width="500" height="500"></svg>
-  <div class="legend">
-    <div class="legend-item"><span class="swatch" style="background:#4A90E2"></span>Voisins du Zéro (17)</div>
-    <div class="legend-item"><span class="swatch" style="background:#F5A623"></span>Tiers du Cylindre (12)</div>
-    <div class="legend-item"><span class="swatch" style="background:#9013FE"></span>Orphelins (8)</div>
-    <div class="legend-item"><span class="swatch" style="background:#16a085"></span>אפס (0)</div>
-  </div>
-  <div class="note">
-    הטבעת הפנימית מציגה את הצבע האמיתי של המספר (אדום/שחור) — הצבע על הלוח ובהימורים כמו "אדום/שחור".
-  </div>
-</div>
+  <!-- ===== Summary panel ===== -->
+  <aside id="summary">
+    <h3>סיכום יום</h3>
+    <div class="meta" id="today-date"></div>
 
-<div class="info">
-  <h1>הקבוצות המוכרזות</h1>
+    <div class="stat">
+      <div class="nums"><span>קלוריות</span><b><span id="cal">0</span> / <span id="cal-target">2200</span></b></div>
+      <div class="bar"><span id="cal-bar" style="width:0%;background:var(--brand)"></span></div>
+    </div>
 
-  <div class="group voisins">
-    <h3>Voisins du Zéro — שכני האפס</h3>
-    <div>17 מספרים, חצי הגלגל סביב 0. עולה <b>9 ז'יטונים</b>.</div>
-    <div class="nums">22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25</div>
-  </div>
+    <div class="stat">
+      <div class="nums"><span>חלבון (גרם)</span><b><span id="prot">0</span> / <span id="prot-target">160</span></b></div>
+      <div class="bar"><span id="prot-bar" style="width:0%;background:var(--good)"></span></div>
+    </div>
 
-  <div class="group tiers">
-    <h3>Tiers du Cylindre — שליש הגלגל</h3>
-    <div>12 מספרים, מול האפס. עולה <b>6 ז'יטונים</b>.</div>
-    <div class="nums">27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33</div>
-  </div>
+    <h4>הצעות חכמות</h4>
+    <div id="suggest"></div>
 
-  <div class="group orphelins">
-    <h3>Orphelins — היתומים</h3>
-    <div>8 מספרים, שני קטעים שנשארים. עולה <b>5 ז'יטונים</b>.</div>
-    <div class="nums">17, 34, 6 &nbsp;|&nbsp; 1, 20, 14, 31, 9</div>
-  </div>
+    <div class="controls">
+      <button class="primary" onclick="saveWeight()">שמור משקל</button>
+      <button onclick="resetDay()">יום חדש</button>
+    </div>
+  </aside>
 
-  <h2>שכנים של מספר X</h2>
-  <p>המספר X + 2 משמאלו ועד 2 מימינו <b>על הגלגל</b> (לא על הלוח!). 5 ז'יטונים, כל אחד 35:1.</p>
+  <!-- ===== Main content ===== -->
+  <main>
+    <h1>אפליקציית חיטוב חכמה 💪</h1>
 
-  <h2>תשלומים</h2>
-  <table>
-    <tr><th>הימור</th><th>מספרים</th><th>תשלום</th></tr>
-    <tr><td>Straight (בודד)</td><td>1</td><td>35:1</td></tr>
-    <tr><td>Split</td><td>2</td><td>17:1</td></tr>
-    <tr><td>Street (שורה)</td><td>3</td><td>11:1</td></tr>
-    <tr><td>Corner (פינה)</td><td>4</td><td>8:1</td></tr>
-    <tr><td>Six Line</td><td>6</td><td>5:1</td></tr>
-    <tr><td>Column / Dozen</td><td>12</td><td>2:1</td></tr>
-    <tr><td>אדום/שחור, זוגי/אי-זוגי, 1-18/19-36</td><td>18</td><td>1:1</td></tr>
-  </table>
-</div>
+    <h2>בוקר</h2>
+    <div class="section food-grid" data-meal="בוקר">
+      <button onclick="add('חביתה 4 ביצים',280,28)">חביתה 4 ביצים<small>280 קק״ל · 28ג׳ חלבון</small></button>
+      <button onclick="add('קוטג׳ 250g',300,30)">קוטג׳ 250g<small>300 קק״ל · 30ג׳ חלבון</small></button>
+      <button onclick="add('שייק חלבון',130,25)">שייק חלבון<small>130 קק״ל · 25ג׳ חלבון</small></button>
+      <button onclick="add('לחם 2 פרוסות',160,4)">לחם 2 פרוסות<small>160 קק״ל · 4ג׳ חלבון</small></button>
+    </div>
 
-<div class="info" style="grid-column: 1 / 3;">
-  <h1>הלוח (Table Layout)</h1>
-  <p>על השולחן המספרים מסודרים אחרת לגמרי מהגלגל — 3 שורות אופקיות של 12 מספרים כל אחת. <b>שורה (Street)</b> היא 3 המספרים האנכיים בעמודה (לדוגמה 1-2-3, 4-5-6).</p>
-  <div id="table-layout"></div>
-</div>
+    <h2>צהריים</h2>
+    <div class="section food-grid" data-meal="צהריים">
+      <button onclick="add('חזה עוף 250g',330,70)">חזה עוף 250g<small>330 קק״ל · 70ג׳ חלבון</small></button>
+      <button onclick="add('המבורגר 2 קציצות',450,50)">המבורגר 2 קציצות<small>450 קק״ל · 50ג׳ חלבון</small></button>
+      <button onclick="add('סטייק 250g',400,55)">סטייק 250g<small>400 קק״ל · 55ג׳ חלבון</small></button>
+      <button onclick="add('פיתה',200,5)">פיתה<small>200 קק״ל · 5ג׳ חלבון</small></button>
+      <button onclick="add('אורז 200g',260,5)">אורז 200g<small>260 קק״ל · 5ג׳ חלבון</small></button>
+      <button onclick="add('טונה בקופסה',180,30)">טונה בקופסה<small>180 קק״ל · 30ג׳ חלבון</small></button>
+    </div>
 
+    <h2>נשנושים</h2>
+    <div class="section food-grid" data-meal="נשנושים">
+      <button onclick="add('שוקולד',100,1)">שוקולד<small>100 קק״ל · 1ג׳ חלבון</small></button>
+      <button onclick="add('ארטיק',120,2)">ארטיק<small>120 קק״ל · 2ג׳ חלבון</small></button>
+      <button onclick="add('יוגורט יווני',90,15)">יוגורט יווני<small>90 קק״ל · 15ג׳ חלבון</small></button>
+      <button onclick="add('אגוזים חופן',180,6)">אגוזים חופן<small>180 קק״ל · 6ג׳ חלבון</small></button>
+    </div>
+
+    <h2>הוספה ידנית</h2>
+    <div class="section">
+      <div class="row">
+        <input id="c-name" type="text" placeholder="שם מאכל">
+        <input id="c-cal" type="number" inputmode="numeric" placeholder="קלוריות">
+        <input id="c-prot" type="number" inputmode="numeric" placeholder="חלבון (ג׳)">
+        <button class="primary" onclick="addCustom()" style="color:#fff;background:var(--brand);border-color:var(--brand)">הוסף</button>
+      </div>
+    </div>
+
+    <h2>מה אכלתי היום</h2>
+    <div class="section">
+      <ul id="log"></ul>
+    </div>
+
+    <h2>יעדים יומיים</h2>
+    <div class="section">
+      <div class="row">
+        <label>יעד קלוריות</label>
+        <input id="t-cal" type="number" inputmode="numeric">
+        <label>יעד חלבון (ג׳)</label>
+        <input id="t-prot" type="number" inputmode="numeric">
+        <button onclick="saveTargets()">עדכן יעדים</button>
+      </div>
+    </div>
+
+    <h2>גרף ירידה במשקל</h2>
+    <div class="section">
+      <canvas id="chart" height="120"></canvas>
+      <p id="weight-empty" class="empty">עדיין לא נשמרו משקלים — לחץ על "שמור משקל".</p>
+      <button id="undo-weight" onclick="removeLastWeight()" style="margin-top:8px;display:none">מחק משקל אחרון</button>
+    </div>
+  </main>
 </div>
 
 <script>
-// ============ Wheel ============
-const wheelOrder = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
-const reds = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+// ===== State & persistence =====
+const todayKey = () => new Date().toLocaleDateString('he-IL');
 
-const voisins = new Set([22,18,29,7,28,12,35,3,26,0,32,15,19,4,21,2,25]);
-const tiers = new Set([27,13,36,11,30,8,23,10,5,24,16,33]);
-const orphelins = new Set([17,34,6,1,20,14,31,9]);
+let targets = JSON.parse(localStorage.getItem("targets") || 'null') || { cal: 2200, prot: 160 };
+let weights = JSON.parse(localStorage.getItem("weights") || "[]");
 
-function groupColor(n) {
-  if (n === 0) return '#16a085';
-  if (voisins.has(n)) return '#4A90E2';
-  if (tiers.has(n)) return '#F5A623';
-  if (orphelins.has(n)) return '#9013FE';
-  return '#555';
+// Daily log is stored per-date so a reload keeps today's food and a new day starts fresh.
+let dayStore = JSON.parse(localStorage.getItem("day") || 'null');
+if (!dayStore || dayStore.date !== todayKey()) {
+  dayStore = { date: todayKey(), items: [] };
 }
 
-function numberColor(n) {
-  if (n === 0) return '#16a085';
-  return reds.has(n) ? '#c0392b' : '#1a1a1a';
+function persistDay()     { localStorage.setItem("day", JSON.stringify(dayStore)); }
+function persistTargets()  { localStorage.setItem("targets", JSON.stringify(targets)); }
+function persistWeights()  { localStorage.setItem("weights", JSON.stringify(weights)); }
+
+// ===== Food logging =====
+function add(name, c, p) {
+  dayStore.items.push({ name, c: Number(c), p: Number(p) });
+  persistDay();
+  update();
 }
 
-function polar(r, deg) {
-  const rad = (deg - 90) * Math.PI / 180;
-  return [r * Math.cos(rad), r * Math.sin(rad)];
+function addCustom() {
+  const name = document.getElementById("c-name").value.trim();
+  const c = Number(document.getElementById("c-cal").value);
+  const p = Number(document.getElementById("c-prot").value);
+  if (!name || (!c && !p)) { alert("הכנס שם וכמות קלוריות/חלבון"); return; }
+  add(name, c || 0, p || 0);
+  document.getElementById("c-name").value = "";
+  document.getElementById("c-cal").value = "";
+  document.getElementById("c-prot").value = "";
 }
 
-function annularSegment(rIn, rOut, a1, a2) {
-  const [x1, y1] = polar(rOut, a1);
-  const [x2, y2] = polar(rOut, a2);
-  const [x3, y3] = polar(rIn, a2);
-  const [x4, y4] = polar(rIn, a1);
-  const large = (a2 - a1) > 180 ? 1 : 0;
-  return `M ${x1} ${y1} A ${rOut} ${rOut} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${rIn} ${rIn} 0 ${large} 0 ${x4} ${y4} Z`;
+function removeItem(i) {
+  dayStore.items.splice(i, 1);
+  persistDay();
+  update();
 }
 
-const svg = document.getElementById('wheel');
-const N = wheelOrder.length;
-const segAngle = 360 / N;
-const rOuter = 240, rGroup = 200, rColor = 160, rInner = 130;
+function totals() {
+  return dayStore.items.reduce(
+    (t, it) => ({ cal: t.cal + it.c, prot: t.prot + it.p }),
+    { cal: 0, prot: 0 }
+  );
+}
 
-wheelOrder.forEach((num, i) => {
-  const a1 = i * segAngle - segAngle / 2;
-  const a2 = a1 + segAngle;
+// ===== Rendering =====
+function update() {
+  const { cal, prot } = totals();
 
-  // Group ring (outer)
-  const seg1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  seg1.setAttribute('d', annularSegment(rGroup, rOuter, a1, a2));
-  seg1.setAttribute('fill', groupColor(num));
-  seg1.setAttribute('stroke', '#111');
-  seg1.setAttribute('stroke-width', '0.5');
-  svg.appendChild(seg1);
+  document.getElementById("today-date").innerText = "תאריך: " + dayStore.date;
+  document.getElementById("cal").innerText = cal;
+  document.getElementById("prot").innerText = prot;
+  document.getElementById("cal-target").innerText = targets.cal;
+  document.getElementById("prot-target").innerText = targets.prot;
 
-  // Number color ring (inner)
-  const seg2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  seg2.setAttribute('d', annularSegment(rInner, rColor, a1, a2));
-  seg2.setAttribute('fill', numberColor(num));
-  seg2.setAttribute('stroke', '#111');
-  seg2.setAttribute('stroke-width', '0.5');
-  svg.appendChild(seg2);
+  setBar("cal-bar", cal, targets.cal);
+  setBar("prot-bar", prot, targets.prot);
 
-  // Number label
-  const mid = (a1 + a2) / 2;
-  const [tx, ty] = polar((rGroup + rOuter) / 2, mid);
-  const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  txt.setAttribute('x', tx);
-  txt.setAttribute('y', ty);
-  txt.setAttribute('text-anchor', 'middle');
-  txt.setAttribute('dominant-baseline', 'central');
-  txt.setAttribute('fill', '#fff');
-  txt.setAttribute('font-size', '14');
-  txt.setAttribute('font-weight', 'bold');
-  txt.setAttribute('transform', `rotate(${mid} ${tx} ${ty})`);
-  txt.textContent = num;
-  svg.appendChild(txt);
-});
+  renderLog();
+  suggest(cal, prot);
+}
 
-// Center circle
-const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-center.setAttribute('r', rInner);
-center.setAttribute('fill', '#0a0a0a');
-center.setAttribute('stroke', '#333');
-svg.appendChild(center);
+function setBar(id, value, target) {
+  const pct = target > 0 ? Math.min(100, Math.round((value / target) * 100)) : 0;
+  const bar = document.getElementById(id);
+  bar.style.width = pct + "%";
+  // Turn red once you pass the target by more than 10%.
+  bar.style.background = value > target * 1.1 ? "var(--bad)" : bar.dataset.color || bar.style.background;
+}
 
-const centerText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-centerText.setAttribute('text-anchor', 'middle');
-centerText.setAttribute('dominant-baseline', 'central');
-centerText.setAttribute('fill', '#888');
-centerText.setAttribute('font-size', '20');
-centerText.textContent = 'European Wheel';
-svg.appendChild(centerText);
-
-// ============ Table layout ============
-const tableContainer = document.getElementById('table-layout');
-const grid = document.createElement('div');
-grid.className = 'table-layout';
-
-// Top label
-const topLabel = document.createElement('div');
-topLabel.className = 'label-cell';
-topLabel.textContent = '0';
-grid.appendChild(topLabel);
-
-// Zero cell spans 3 rows
-const zeroCell = document.createElement('div');
-zeroCell.className = 'cell green zero-cell';
-zeroCell.textContent = '0';
-zeroCell.style.gridRow = '1 / 4';
-zeroCell.style.gridColumn = '1';
-// We'll use a different approach - simpler layout
-
-grid.innerHTML = '';
-
-// Build 3 rows × 13 columns (zero + 12 numbers)
-const rows = [
-  [3,6,9,12,15,18,21,24,27,30,33,36],
-  [2,5,8,11,14,17,20,23,26,29,32,35],
-  [1,4,7,10,13,16,19,22,25,28,31,34]
-];
-
-// First column: 0 spanning 3 rows
-const z = document.createElement('div');
-z.className = 'cell green';
-z.textContent = '0';
-z.style.gridRow = '1 / 4';
-z.style.gridColumn = '1';
-z.style.height = 'auto';
-grid.appendChild(z);
-
-const labels2to1 = ['2:1', '2:1', '2:1'];
-
-rows.forEach((row, ri) => {
-  row.forEach((num, ci) => {
-    const c = document.createElement('div');
-    c.className = 'cell ' + (reds.has(num) ? 'red' : 'black');
-    c.textContent = num;
-    c.style.gridRow = (ri + 1).toString();
-    c.style.gridColumn = (ci + 2).toString();
-    grid.appendChild(c);
+function renderLog() {
+  const ul = document.getElementById("log");
+  ul.innerHTML = "";
+  if (dayStore.items.length === 0) {
+    ul.innerHTML = '<li class="empty">עדיין לא הוספת מאכלים היום.</li>';
+    return;
+  }
+  dayStore.items.forEach((it, i) => {
+    const li = document.createElement("li");
+    li.innerHTML =
+      `<span>${escapeHtml(it.name)} <span class="meta">${it.c} קק״ל · ${it.p}ג׳</span></span>` +
+      `<button class="del" title="הסר" onclick="removeItem(${i})">×</button>`;
+    ul.appendChild(li);
   });
-  const lbl = document.createElement('div');
-  lbl.className = 'label-cell';
-  lbl.textContent = labels2to1[ri];
-  lbl.style.gridRow = (ri + 1).toString();
-  lbl.style.gridColumn = '14';
-  grid.appendChild(lbl);
-});
+}
 
-tableContainer.appendChild(grid);
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
 
-// Outside bets row
-const outside = document.createElement('div');
-outside.style.marginTop = '12px';
-outside.style.fontSize = '13px';
-outside.style.color = '#aaa';
-outside.innerHTML = 'מתחת ללוח: 1st 12 | 2nd 12 | 3rd 12 — ומתחת לזה: 1-18 | EVEN | RED | BLACK | ODD | 19-36';
-tableContainer.appendChild(outside);
+function suggest(cal, prot) {
+  let html = "";
+  const proteinGap = targets.prot - prot;
+  const calGap = targets.cal - cal;
+
+  if (proteinGap > 30) {
+    html += `<div class='bad'>חסר חלבון (עוד ${proteinGap}ג׳) — מומלץ שייק או חזה עוף</div>`;
+  } else if (proteinGap > 0) {
+    html += `<div class='warn'>כמעט שם — עוד ${proteinGap}ג׳ חלבון ליעד</div>`;
+  } else {
+    html += `<div class='good'>יעד החלבון הושג ✅</div>`;
+  }
+
+  if (calGap < -200) {
+    html += `<div class='bad'>עודף קלוריות (${-calGap} מעל היעד) — להוריד נשנושים</div>`;
+  } else if (calGap > 300) {
+    html += `<div class='good'>נשאר מקום ל-${calGap} קק״ל — אפשר להוסיף אוכל נקי</div>`;
+  } else {
+    html += `<div class='good'>מאזן קלוריות תקין להיום</div>`;
+  }
+
+  document.getElementById("suggest").innerHTML = html;
+}
+
+// ===== Day reset =====
+function resetDay() {
+  if (dayStore.items.length && !confirm("לאפס את היום ולמחוק את כל המאכלים?")) return;
+  dayStore = { date: todayKey(), items: [] };
+  persistDay();
+  update();
+}
+
+// ===== Targets =====
+function saveTargets() {
+  const c = Number(document.getElementById("t-cal").value);
+  const p = Number(document.getElementById("t-prot").value);
+  if (c > 0) targets.cal = c;
+  if (p > 0) targets.prot = p;
+  persistTargets();
+  update();
+}
+
+// ===== Weight tracking =====
+function saveWeight() {
+  const w = prompt("כמה הוא שוקל היום? (ק״ג)");
+  if (!w) return;
+  const num = Number(w);
+  if (!num || num <= 0) { alert("הכנס מספר תקין"); return; }
+  weights.push({ date: todayKey(), weight: num });
+  persistWeights();
+  drawChart();
+}
+
+function removeLastWeight() {
+  if (!weights.length) return;
+  if (!confirm("למחוק את רישום המשקל האחרון?")) return;
+  weights.pop();
+  persistWeights();
+  drawChart();
+}
+
+let chart = null;
+function drawChart() {
+  const empty = document.getElementById("weight-empty");
+  const undoBtn = document.getElementById("undo-weight");
+  empty.style.display = weights.length ? "none" : "block";
+  undoBtn.style.display = weights.length ? "inline-block" : "none";
+
+  const ctx = document.getElementById("chart");
+  const labels = weights.map(w => w.date);
+  const data = weights.map(w => w.weight);
+
+  // Reuse a single Chart instance — recreating without destroying leaks and
+  // causes flicker/ghost tooltips. Update in place when it already exists.
+  if (chart) {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.update();
+    return;
+  }
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "משקל (ק״ג)",
+        data,
+        borderColor: "#2c7be5",
+        backgroundColor: "rgba(44,123,229,.12)",
+        fill: true,
+        tension: .25,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { font: { family: "Arial" } } } },
+      scales: { y: { beginAtZero: false } }
+    }
+  });
+}
+
+// ===== Init =====
+document.querySelectorAll(".bar > span").forEach(s => { s.dataset.color = s.style.background; });
+document.getElementById("t-cal").value = targets.cal;
+document.getElementById("t-prot").value = targets.prot;
+drawChart();
+update();
 </script>
 
 </body>
