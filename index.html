@@ -134,6 +134,16 @@
   .row label { font-size: 13px; color: var(--muted); }
   canvas { max-width: 100%; }
 
+  /* Goal panel */
+  .goal-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .goal-box {
+    background: #f5f8fc; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px; text-align: center;
+  }
+  .goal-box span { display: block; font-size: 12px; color: var(--muted); }
+  .goal-box b { font-size: 18px; }
+  .goal-note { font-size: 13px; margin: 12px 0 0; background:#e8f6ee; padding:10px 12px; border-radius:10px; }
+
   @media (max-width: 780px) {
     .layout { grid-template-columns: 1fr; }
     #summary { position: static; order: -1; }
@@ -159,11 +169,11 @@
       <div class="bar"><span id="cal-bar" style="width:0%;background:var(--cal)"></span></div>
     </div>
     <div class="stat">
-      <div class="nums"><span>🍗 חלבון (ג׳)</span><b><span id="prot">0</span> / <span id="prot-target">160</span></b></div>
+      <div class="nums"><span>🍗 חלבון (ג׳)</span><b><span id="prot">0</span> / <span id="prot-target">175</span></b></div>
       <div class="bar"><span id="prot-bar" style="width:0%;background:var(--prot)"></span></div>
     </div>
     <div class="stat">
-      <div class="nums"><span>🍞 פחמימות (ג׳)</span><b><span id="carb">0</span> / <span id="carb-target">200</span></b></div>
+      <div class="nums"><span>🍞 פחמימות (ג׳)</span><b><span id="carb">0</span> / <span id="carb-target">210</span></b></div>
       <div class="bar"><span id="carb-bar" style="width:0%;background:var(--carb)"></span></div>
     </div>
 
@@ -178,6 +188,19 @@
 
   <!-- ===== Main ===== -->
   <main>
+
+    <h2>🎯 המטרה שלי — חיטוב</h2>
+    <div class="section" id="goal">
+      <div class="goal-grid">
+        <div class="goal-box"><span>📏 גובה</span><b id="g-height">1.80 מ׳</b></div>
+        <div class="goal-box"><span>⚖️ משקל</span><b id="g-weight">83 ק״ג</b></div>
+        <div class="goal-box"><span>📊 BMI</span><b id="g-bmi">—</b></div>
+      </div>
+      <p class="goal-note">
+        🔻 המטרה: <b>לרדת באחוזי שומן</b> ולשמור/לבנות שריר.<br>
+        התוכנית: גירעון קלורי מתון של ~500 קק״ל ביום (≈ חצי ק״ג שומן בשבוע) + הרבה חלבון כדי לשמור על השריר 💪.
+      </p>
+    </div>
 
     <h2>🍳 מה להכין עכשיו?</h2>
     <div class="section">
@@ -292,8 +315,17 @@ function mealMacros(m) {
 
 // ===== State & persistence =====
 const todayKey = () => new Date().toLocaleDateString('he-IL');
-let targets = JSON.parse(localStorage.getItem("targets") || 'null') || { cal:2200, prot:160, carb:200 };
-if (targets.carb == null) targets.carb = 200;
+
+// Personal profile + cutting plan (fat loss while keeping/building muscle)
+const PROFILE = { heightM: 1.80, startWeight: 83 };
+// version bumps force the recommended plan to apply once, even over old saved targets
+const PLAN = { cal: 2200, prot: 175, carb: 210, version: 3 };
+
+let targets = JSON.parse(localStorage.getItem("targets") || 'null');
+if (!targets || targets.version !== PLAN.version) {
+  targets = { cal: PLAN.cal, prot: PLAN.prot, carb: PLAN.carb, version: PLAN.version };
+  localStorage.setItem("targets", JSON.stringify(targets));
+}
 let weights = JSON.parse(localStorage.getItem("weights") || "[]");
 let dayStore = JSON.parse(localStorage.getItem("day") || 'null');
 if (!dayStore || dayStore.date !== todayKey()) dayStore = { date: todayKey(), items: [] };
@@ -447,7 +479,21 @@ function resetDay() {
 function saveTargets() {
   const c=+document.getElementById("t-cal").value, p=+document.getElementById("t-prot").value, cb=+document.getElementById("t-carb").value;
   if (c>0) targets.cal=c; if (p>0) targets.prot=p; if (cb>0) targets.carb=cb;
+  targets.version = PLAN.version;
   persistTargets(); update();
+}
+
+// ===== Goal panel (height / weight / BMI) =====
+function currentWeight() {
+  return weights.length ? weights[weights.length - 1].weight : PROFILE.startWeight;
+}
+function renderGoal() {
+  const w = currentWeight();
+  const bmi = w / (PROFILE.heightM * PROFILE.heightM);
+  document.getElementById("g-height").innerText = PROFILE.heightM.toFixed(2) + " מ׳";
+  document.getElementById("g-weight").innerText = w + " ק״ג";
+  const tag = bmi < 18.5 ? "תת-משקל" : bmi < 25 ? "תקין" : bmi < 30 ? "עודף קל" : "גבוה";
+  document.getElementById("g-bmi").innerText = bmi.toFixed(1) + " · " + tag;
 }
 function saveWeight() {
   const w = prompt("כמה אתה שוקל היום? (ק״ג) ⚖️");
@@ -465,6 +511,7 @@ function removeLastWeight() {
 
 let chart = null;
 function drawChart() {
+  renderGoal();
   document.getElementById("weight-empty").style.display = weights.length ? "none" : "block";
   document.getElementById("undo-weight").style.display = weights.length ? "inline-block" : "none";
   const labels = weights.map(w => w.date), data = weights.map(w => w.weight);
@@ -480,6 +527,7 @@ function drawChart() {
 
 // ===== Init =====
 renderMenu();
+renderGoal();
 document.querySelectorAll(".bar > span").forEach(s => s.dataset.color = s.style.background);
 document.getElementById("t-cal").value = targets.cal;
 document.getElementById("t-prot").value = targets.prot;
