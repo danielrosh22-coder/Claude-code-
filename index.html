@@ -165,15 +165,15 @@
     <div class="meta" id="today-date"></div>
 
     <div class="stat">
-      <div class="nums"><span>🔥 קלוריות</span><b><span id="cal">0</span> / <span id="cal-target">2200</span></b></div>
+      <div class="nums"><span>🔥 קלוריות</span><b><span id="cal">0</span> / <span id="cal-target">2500</span></b></div>
       <div class="bar"><span id="cal-bar" style="width:0%;background:var(--cal)"></span></div>
     </div>
     <div class="stat">
-      <div class="nums"><span>🍗 חלבון (ג׳)</span><b><span id="prot">0</span> / <span id="prot-target">175</span></b></div>
+      <div class="nums"><span>🍗 חלבון (ג׳)</span><b><span id="prot">0</span> / <span id="prot-target">180</span></b></div>
       <div class="bar"><span id="prot-bar" style="width:0%;background:var(--prot)"></span></div>
     </div>
     <div class="stat">
-      <div class="nums"><span>🍞 פחמימות (ג׳)</span><b><span id="carb">0</span> / <span id="carb-target">210</span></b></div>
+      <div class="nums"><span>🍞 פחמימות (ג׳)</span><b><span id="carb">0</span> / <span id="carb-target">280</span></b></div>
       <div class="bar"><span id="carb-bar" style="width:0%;background:var(--carb)"></span></div>
     </div>
 
@@ -198,7 +198,8 @@
       </div>
       <p class="goal-note">
         🔻 המטרה: <b>לרדת באחוזי שומן</b> ולשמור/לבנות שריר.<br>
-        התוכנית: גירעון קלורי מתון של ~500 קק״ל ביום (≈ חצי ק״ג שומן בשבוע) + הרבה חלבון כדי לשמור על השריר 💪.
+        מתאמן 5+ בשבוע 🏋️ — תחזוקה ~3000 קק״ל. התוכנית: גירעון מתון של ~500 קק״ל ביום
+        (≈ חצי ק״ג שומן בשבוע) + הרבה חלבון לשמירת השריר ופחמימות לאנרגיה באימונים 💪.
       </p>
     </div>
 
@@ -319,7 +320,7 @@ const todayKey = () => new Date().toLocaleDateString('he-IL');
 // Personal profile + cutting plan (fat loss while keeping/building muscle)
 const PROFILE = { heightM: 1.80, startWeight: 83 };
 // version bumps force the recommended plan to apply once, even over old saved targets
-const PLAN = { cal: 2200, prot: 175, carb: 210, version: 3 };
+const PLAN = { cal: 2500, prot: 180, carb: 280, version: 4 };
 
 let targets = JSON.parse(localStorage.getItem("targets") || 'null');
 if (!targets || targets.version !== PLAN.version) {
