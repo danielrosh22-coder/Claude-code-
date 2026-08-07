@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>THE WOLF — נתפס 6/6</title>
+<style>
+/*__FONTS__*/
+:root{
+  --bg0:#0a0b0f;
+  --bg1:#111319;
+  --gold:#E7B94D;
+  --gold2:#C9992F;
+  --gold-soft:rgba(231,185,77,.16);
+  --green:#37D67A;
+  --green2:#1FA95B;
+  --ink:#F4F1E9;
+  --muted:#8C93A0;
+  --card:#13161d;
+  --line:rgba(231,185,77,.20);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+.story{
+  position:relative;
+  width:1080px;height:1920px;
+  background:
+    radial-gradient(120% 70% at 50% -8%, rgba(231,185,77,.10) 0%, rgba(231,185,77,0) 42%),
+    radial-gradient(90% 60% at 50% 108%, rgba(231,185,77,.08) 0%, rgba(231,185,77,0) 46%),
+    linear-gradient(180deg,#0c0d12 0%, #0a0b0f 55%, #08090c 100%);
+  color:var(--ink);
+  font-family:'Heebo',sans-serif;
+  overflow:hidden;
+  padding:78px 76px 70px;
+  display:flex;flex-direction:column;
+}
+/* subtle vignette + top gold hairline */
+.story::before{
+  content:"";position:absolute;inset:0;
+  box-shadow:inset 0 0 220px rgba(0,0,0,.75);
+  pointer-events:none;
+}
+.topline{position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,transparent, var(--gold) 20%, #F6D588 50%, var(--gold) 80%, transparent);}
+/* faint dot particles */
+.dot{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.25;filter:blur(.3px)}
+
+/* ============ HEADER ============ */
+.header{display:flex;align-items:center;justify-content:space-between;direction:ltr}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand .name{font-family:'Georgia','Liberation Serif',serif;font-weight:700;font-size:44px;letter-spacing:6px;color:#fff}
+.brand .sub{margin-top:9px;font-size:16px;letter-spacing:9px;color:var(--gold);font-weight:600}
+.mark{display:flex;align-items:center;gap:16px}
+.slashes{display:flex;gap:5px}
+.slashes span{width:7px;height:34px;background:var(--gold);transform:skewX(-18deg);border-radius:2px;opacity:.9}
+.slashes span:nth-child(2){opacity:.6}
+.slashes span:nth-child(3){opacity:.35}
+.wolfbox{width:78px;height:78px;border:2px solid var(--gold);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:42px;
+  background:radial-gradient(circle at 50% 35%, rgba(231,185,77,.14), transparent 70%);
+  box-shadow:0 0 24px rgba(231,185,77,.18) inset}
+
+/* ============ KICKER ============ */
+.kicker{margin-top:60px;display:flex;align-items:center;justify-content:center;gap:20px}
+.kicker .ln{height:1px;width:120px;background:linear-gradient(90deg,transparent,var(--gold))}
+.kicker .ln.r{background:linear-gradient(90deg,var(--gold),transparent)}
+.kicker .txt{font-size:24px;letter-spacing:3px;color:var(--gold);font-weight:700;white-space:nowrap}
+
+/* ============ HERO ============ */
+.hero{margin-top:40px;text-align:center}
+.status{display:inline-flex;align-items:center;gap:26px;justify-content:center}
+.check{width:112px;height:112px;border-radius:50%;
+  background:linear-gradient(160deg,var(--green),var(--green2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 10px rgba(55,214,122,.12), 0 18px 44px rgba(31,169,91,.40);}
+.check svg{width:60px;height:60px}
+.status .word{font-family:'Heebo';font-weight:900;font-size:190px;line-height:.9;color:#fff;
+  text-shadow:0 6px 40px rgba(0,0,0,.6)}
+.pill{margin:44px auto 0;display:inline-flex;align-items:center;gap:18px;
+  padding:24px 46px;border-radius:999px;
+  background:linear-gradient(180deg,#F6D588,var(--gold) 55%,var(--gold2));
+  color:#1a1400;font-weight:900;font-size:44px;letter-spacing:.5px;
+  box-shadow:0 16px 40px rgba(231,185,77,.28)}
+.pill .frac{font-size:56px;font-weight:900}
+.subnote{margin-top:26px;font-size:30px;color:var(--muted);font-weight:500}
+.subnote b{color:var(--ink);font-weight:800}
+
+/* ============ RESULT CARD ============ */
+.card{position:relative;margin-top:52px;background:linear-gradient(180deg,#151922,#10131a);
+  border:1.5px solid var(--line);border-radius:34px;padding:52px 54px 48px;
+  box-shadow:0 30px 70px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.4)}
+.card .qmark{position:absolute;top:22px;left:34px;font-family:'Georgia',serif;font-size:120px;
+  color:var(--gold);opacity:.16;line-height:1}
+.hit-ribbon{position:absolute;top:34px;right:-8px;background:linear-gradient(180deg,var(--green),var(--green2));
+  color:#04210f;font-weight:900;font-size:26px;letter-spacing:1px;padding:12px 30px;border-radius:10px 4px 10px 4px;
+  box-shadow:0 10px 26px rgba(31,169,91,.4)}
+.league{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--muted);
+  font-size:26px;font-weight:600;margin-bottom:6px}
+.league .flag{font-size:30px}
+.teams{text-align:center;font-weight:900;font-size:60px;color:#fff;margin:14px 0 8px;direction:ltr}
+.score{display:flex;align-items:center;justify-content:center;gap:26px;margin:20px 0 30px;direction:ltr}
+.score .n{font-weight:900;font-size:96px;color:var(--gold);line-height:1}
+.score .dash{font-size:66px;color:var(--muted);font-weight:300}
+.score .lab{font-size:22px;color:var(--muted);letter-spacing:2px;margin-top:10px}
+.pick{margin:8px 0 6px;text-align:center;background:var(--gold-soft);border:1px solid var(--line);
+  border-radius:18px;padding:26px 28px}
+.pick .pk{font-size:44px;font-weight:900;color:var(--gold)}
+.pick .pk2{font-size:30px;font-weight:600;color:var(--ink);margin-top:8px;opacity:.9}
+.chips{display:flex;gap:22px;margin-top:30px}
+.chip{flex:1;background:#0e1118;border:1px solid rgba(255,255,255,.06);border-radius:18px;
+  padding:24px 20px;text-align:center}
+.chip .k{font-size:24px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.chip .v{font-size:52px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px}
+.chip .v .g{color:var(--green)}
+.chip.gold .v{color:var(--gold)}
+
+/* ============ FOOTER ============ */
+.spacer{flex:1}
+.tagline{text-align:center;font-style:italic;font-weight:800;font-size:52px;color:var(--gold);
+  letter-spacing:1px;margin-top:44px}
+.tagline .w{color:#fff}
+.tg{margin:30px auto 0;display:flex;align-items:center;justify-content:center;gap:18px;
+  padding:22px 40px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02);width:max-content}
+.tg .ic{width:52px;height:52px;border-radius:50%;background:#2AABEE;display:flex;align-items:center;justify-content:center}
+.tg .ic svg{width:30px;height:30px}
+.tg .t{font-size:30px;font-weight:800;color:#fff}
+.tg .t small{display:block;font-size:20px;color:var(--muted);font-weight:500;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="story">
+  <div class="topline"></div>
+  <div class="dot" style="top:340px;left:120px"></div>
+  <div class="dot" style="top:520px;right:150px;opacity:.18"></div>
+  <div class="dot" style="top:760px;left:90px;opacity:.15"></div>
+  <div class="dot" style="top:1180px;right:110px;opacity:.2"></div>
+  <div class="dot" style="top:1520px;left:160px;opacity:.14"></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="mark">
+      <div class="slashes"><span></span><span></span><span></span></div>
+      <div class="wolfbox">🐺</div>
+    </div>
+    <div class="brand" style="text-align:right">
+      <div class="name">THE WOLF</div>
+      <div class="sub">FOOTBALL&nbsp;ANALYTICS</div>
+    </div>
+  </div>
+
+  <!-- KICKER -->
+  <div class="kicker">
+    <span class="ln"></span>
+    <span class="txt">יום רביעי לאתגר</span>
+    <span class="ln r"></span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="status">
+      <div class="word">נתפס</div>
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="#04210f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="pill"><span class="frac">6/6</span><span>המלצות נתפסו</span></div>
+    <div class="subnote">רצף מושלם השבוע — <b>שיטה, לא מזל</b></div>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="card">
+    <div class="qmark">”</div>
+    <div class="hit-ribbon">✓ נתפס</div>
+    <div class="league"><span class="flag">🇫🇮</span><span>Veikkausliiga · ליגה פינית</span></div>
+    <div class="teams">SJK — Gnistan</div>
+    <div class="score">
+      <div style="text-align:center"><div class="n">1</div></div>
+      <div class="dash">–</div>
+      <div style="text-align:center"><div class="n">2</div></div>
+    </div>
+    <div class="pick">
+      <div class="pk">אובר 2.5 · שתי הקבוצות כובשות</div>
+      <div class="pk2">3 שערים נפלו כבר בפתיחה</div>
+    </div>
+    <div class="chips">
+      <div class="chip gold">
+        <div class="k">יחס</div>
+        <div class="v">1.80</div>
+      </div>
+      <div class="chip">
+        <div class="k">זמן שנדרש</div>
+        <div class="v"><span class="g">✓</span> 3 דקות</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- FOOTER -->
+  <div class="tagline">זה לא מזל. <span class="w">שיטה.</span></div>
+  <div class="tg">
+    <div class="ic"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21.9 4.3l-3.2 15c-.24 1.06-.87 1.32-1.76.82l-4.86-3.58-2.35 2.26c-.26.26-.48.48-.98.48l.35-4.95L18 5.6c.4-.35-.09-.55-.62-.2L6.9 11.9l-4.7-1.47c-1.02-.32-1.04-1.02.22-1.5L20.6 2.4c.85-.31 1.6.2 1.3 1.9z"/></svg></div>
+    <div class="t">הצטרפו לערוץ בטלגרם<small>ניתוחים והמלצות יומיות</small></div>
+  </div>
+</div>
+</body>
+</html>
