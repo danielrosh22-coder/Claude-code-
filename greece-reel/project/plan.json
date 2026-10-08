@@ -1,0 +1,100 @@
+{
+  "title": "מה הייתי אורזת לחופשה ביוון?",
+  "aspect": "9:16",
+  "mode": "motion",
+  "voice": "none",
+  "captions": "none",
+  "scenes": [
+    {
+      "id": "hook",
+      "seconds": 2.4,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["מה הייתי אורזת", "לחופשה ביוון?", "לוק אחד · 4 פריטים"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Look: sunny Santorini editorial. One continuous camera over the single outfit photo for the whole ~14s film; the camera travels item to item like a shoppable tag tour. Ground is the photo itself. Palette: Aegean blue #0B4FA8 hero, white cards, gold #C9A24A accent (from the clutch). Faces: secularOne headlines, assistant labels. Silent export - the trending song is added in the Instagram/TikTok app. Hook: big two-line question in a white card at the top over the sky, slow push-in."
+    },
+    {
+      "id": "top",
+      "seconds": 2.3,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["01", "גופיית סריגה עם נצנצים"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Camera pushes onto the knit sequin tank top; a pulsing tag dot lands on it and a numbered label card rises below."
+    },
+    {
+      "id": "bag",
+      "seconds": 2.0,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["02", "קלאץ' קלוע בזהב"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Camera glides down-left to the gold woven clutch; same tag grammar."
+    },
+    {
+      "id": "skirt",
+      "seconds": 2.3,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["03", "חצאית מקסי סרוגה תואמת"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Camera eases out a little to frame the matching maxi knit skirt."
+    },
+    {
+      "id": "shoes",
+      "seconds": 1.7,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["04", "סנדלי אצבע שחורים"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Quick dip to the black flat sandals - the shortest beat."
+    },
+    {
+      "id": "list",
+      "seconds": 2.0,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["4/4 במזוודה"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "Camera pulls all the way back to the full look; a packing-list card ticks the four items one after another."
+    },
+    {
+      "id": "end",
+      "seconds": 2.3,
+      "narration": "",
+      "treatment": "motion-graphic",
+      "onScreenText": ["הכל למכירה בעמוד", "שלחו הודעה לפרטים"],
+      "imagePrompt": null,
+      "clipPrompt": null,
+      "shareable": false,
+      "imageTags": [],
+      "userAssetIds": ["a-08f321f6"],
+      "notes": "End card held over the full photo: sale line plus call to action with the Instagram glyph."
+    }
+  ]
+}
